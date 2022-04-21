@@ -1,4 +1,4 @@
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { initializeApp } from "firebase/app";
 
 // Configuracion de la api de firebase
@@ -39,4 +39,38 @@ signInButton.addEventListener("click", () => {
       console.log(errorMessage);
       // ..
     });
+});
+
+const logInButton = document.querySelector(".login");
+
+logInButton.addEventListener("click", () => {
+  const email = document.querySelector(".email").value;
+  const password = document.querySelector(".password").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+    // Signed in
+      console.log("El usuario existe");
+    // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode);
+      console.log(errorMessage);
+    });
+});
+
+const logOutButton = document.querySelector(".logout");
+
+logOutButton.addEventListener("click", () => {
+  const auth = getAuth();
+  signOut(auth).then(() => {
+    console.log("Usuario deslogueado");
+  }).catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    console.log(errorCode);
+    console.log(errorMessage);
+  });
 });
