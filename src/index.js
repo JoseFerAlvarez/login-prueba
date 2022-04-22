@@ -1,5 +1,6 @@
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { initializeApp } from "firebase/app";
+import { getFirestore, collection, doc, getDoc, getDocs } from "firebase/firestore";
 
 // Configuracion de la api de firebase
 const firebaseConfig = {
@@ -17,6 +18,7 @@ const app = initializeApp(firebaseConfig);
 
 // Coge el metodo de autenticacion
 const auth = getAuth();
+const fs = getFirestore();
 
 const signInButton = document.querySelector(".signin");
 
@@ -41,6 +43,9 @@ signInButton.addEventListener("click", () => {
     });
 });
 
+// ________________________________________
+
+// Loguea a un usuario existente
 const logInButton = document.querySelector(".login");
 
 logInButton.addEventListener("click", () => {
@@ -60,7 +65,9 @@ logInButton.addEventListener("click", () => {
       console.log(errorMessage);
     });
 });
+// ___________________________________
 
+// Desloguea al usuario actual
 const logOutButton = document.querySelector(".logout");
 
 logOutButton.addEventListener("click", () => {
@@ -74,3 +81,37 @@ logOutButton.addEventListener("click", () => {
     console.log(errorMessage);
   });
 });
+// ----------------------------
+
+// Comprueba que un usuario este autenticado
+getAuth().onAuthStateChanged(function(user) {
+  if (user) {
+    console.log("Usuario logueado.");
+  } else {
+    console.log("No hay usuario logueado");
+  }
+});
+// ____________________________________________
+
+// Lee los animales de la database de firebase
+const showAnimals = document.querySelector(".muestraanimales");
+const animalContainer = document.querySelector(".animales");
+
+showAnimals.addEventListener("click", async() => {
+  const animals = () => getDocs(collection(fs, "animals"));
+
+  const animales = animals();
+  let html = "";
+
+  (await animales).forEach(doc => {
+    html += `<div>
+              <h3>${doc.data().name}</h3>
+              <p>${doc.data().race}</p>
+            </div>`;
+  });
+
+  animalContainer.innerHTML = html;
+
+  console.log(typeof (animales));
+});
+// ______________________________________________
