@@ -1,6 +1,6 @@
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { getFirestore, collection, doc, getDoc, getDocs, addDoc } from "firebase/firestore";
 
 // Configuracion de la api de firebase
 const firebaseConfig = {
@@ -67,6 +67,73 @@ logInButton.addEventListener("click", () => {
 });
 // ___________________________________
 
+// Login con google
+const logGoogle = document.querySelector(".logGoogle");
+
+logGoogle.addEventListener("click", () => {
+  const provider = new GoogleAuthProvider();
+  auth.languageCode = "es";
+
+  signInWithPopup(auth, provider)
+    .then((result) => {
+    // This gives you a Google Access Token. You can use it to access the Google API.
+      // const credential = GoogleAuthProvider.credentialFromResult(result);
+      // const token = credential.accessToken;
+      // The signed-in user info.
+      // const user = result.user;
+
+      console.log("Autenticado con google");
+    // ...
+    }).catch((error) => {
+    // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.email;
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      console.log(errorCode);
+      console.log(errorMessage);
+      console.log(email);
+      console.log(credential);
+    // ...
+    });
+});
+// _____________________________________________
+
+// Login con facebook
+const logFacebook = document.querySelector(".logFacebook");
+
+logFacebook.addEventListener("click", () => {
+  const provider = new FacebookAuthProvider();
+  auth.languageCode = "es";
+
+  signInWithPopup(auth, provider)
+    .then((result) => {
+    // The signed-in user info.
+    // const user = result.user;
+
+      // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+      // const credential = FacebookAuthProvider.credentialFromResult(result);
+      // const accessToken = credential.accessToken;
+
+      console.log("Autenticado con Facebook");
+    })
+    .catch((error) => {
+    // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.email;
+      // The AuthCredential type that was used.
+      const credential = FacebookAuthProvider.credentialFromError(error);
+      console.log(errorCode);
+      console.log(errorMessage);
+      console.log(email);
+      console.log(credential);
+    });
+});
+
 // Desloguea al usuario actual
 const logOutButton = document.querySelector(".logout");
 
@@ -115,3 +182,14 @@ showAnimals.addEventListener("click", async() => {
   console.log(typeof (animales));
 });
 // ______________________________________________
+
+const btnAddAnimal = document.querySelector(".addAnimal");
+
+btnAddAnimal.addEventListener("click", () => {
+  const nameAnimal = document.querySelector(".nameAnimal").value;
+  const ageAnimal = document.querySelector(".ageAnimal").value;
+  const raceAnimal = document.querySelector(".raceAnimal").value;
+  const sexAnimal = document.querySelector(".sexAnimal").value;
+
+  addDoc(collection(fs, "animals"), { age: ageAnimal, name: nameAnimal, race: raceAnimal, sex: sexAnimal });
+});
